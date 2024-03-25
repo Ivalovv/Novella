@@ -37,7 +37,9 @@ option1_button = tk.Button(window, text="Ответ 1")
 option1_button.pack()
 option2_button = tk.Button(window, text="Ответ 2")
 option2_button.pack()
-
+# Создать кнопку для начала заново
+restart_button = tk.Button(window, text="Начать заново")
+restart_button.pack()
 
 # Определить функцию для обработки выбора варианта
 def handle_option_click(option, chronology, story):
@@ -60,10 +62,13 @@ def handle_option_click(option, chronology, story):
     story_text.insert(tk.END, content[chronology[0]])
     story[chronology[0]] = content[chronology[0]]
 
+    option1_button.configure(state=tk.NORMAL)
+    option2_button.configure(state=tk.NORMAL)
+
     if not ("Вариант1_" + chronology[0]) in content and not ("Вариант2_" + chronology[0]) in content:
         option1_button.configure(state=tk.DISABLED)
         option2_button.configure(state=tk.DISABLED)
-        story_text.insert(tk.END, "Конец.\n")
+        story_text.insert(tk.END, "Конец!\n")
         # Открытия файла запись и закрытие
         file = open(chronology[0]+".txt", "w")
         for val, key in enumerate(story):
@@ -80,10 +85,28 @@ def handle_option_click(option, chronology, story):
         story_text.insert(tk.END, content["Вариант1_" + chronology[0]])
         story_text.insert(tk.END, content["Вариант2_" + chronology[0]])
 
+def handle_restart_click():
+    # Очистить текстовое поле истории
+    story_text.delete("1.0", tk.END)
+
+    # Сбросить историю и хронологию
+    chronology[0] = None
+    story = {"Начала": content["Начало"]}
+
+    # Вставить начальный текст истории
+    story_text.insert(tk.END, content["Начало"])
+    story_text.insert(tk.END, content["Вариант1"])
+    story_text.insert(tk.END, content["Вариант2"])
+
+    # Активировать кнопки выбора вариантов
+    option1_button.configure(state=tk.NORMAL)
+    option2_button.configure(state=tk.NORMAL)
+
 
 # Привязать функцию обработки к кнопкам
 option1_button.configure(command=lambda: handle_option_click(1, chronology, story))
 option2_button.configure(command=lambda: handle_option_click(2, chronology, story))
+restart_button.configure(command=handle_restart_click)
 
 # Запустить главное окно
 window.mainloop()
